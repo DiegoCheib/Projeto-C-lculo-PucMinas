@@ -1,1 +1,1 @@
-# Projeto-C-lculo-PucMinas
+# Projeto-Calculo-PucMinas
