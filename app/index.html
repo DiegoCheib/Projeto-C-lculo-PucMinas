@@ -16,10 +16,11 @@
             
             <p>Insira a função polinomial (por exemplo, 2x^2 - 3x + 4):</p>
             
-            <label for="f(x)">f (x) =</label>
-            <input id="function" type="text">
-            
-            <button onclick="calculate()">Calcular Derivada</button>
+            <div class="input-group">
+                <label for="function">f(x) =</label>
+                <input id="function" type="text">
+                <button onclick="calculate()">Calcular Derivada</button>
+            </div>
             
             <p id="output"></p>
         </div>
@@ -62,7 +63,7 @@
                     }
                 }
             }
-    document.getElementById("output").innerHTML = 'f\'(x) = ' + derivada; // Inserindo o resultado no HTML
+    document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada; // Inserindo o resultado no HTML
     
     var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
     if (calcularValorFuncional) {
@@ -84,9 +85,4 @@
         document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
     }
 }       
-
-
-
-
-    
 </script>

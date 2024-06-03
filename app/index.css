@@ -1,21 +1,94 @@
-
-
-html{
+/* Define o estilo base para o documento */
+html, body {
     height: 100%;
-    body{
-        .container{
-            width: 100%;
-            display: flex;
-            
-            padding: 3rem;
-            .container-func{
-                margin-left: 4rem;
-                input{
-                    margin: 0.3rem;
-                    padding: 0.3rem;
-                }
-            }
-        }
-        
-    }
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+}
+
+/* Estiliza o contêiner principal */
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: fit-content;
+    max-height: fit-content;
+    margin: 2rem auto;
+}
+
+/* Estiliza o contêiner da calculadora de derivadas */
+.container-func {
+    margin-top: 2rem;
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Estiliza o título da calculadora */
+.container-func h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Estiliza o parágrafo de instruções */
+.container-func p {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+/* Estiliza o grupo de entrada */
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Estiliza o rótulo e o campo de entrada */
+.container-func label {
+    font-weight: bold;
+    color: #333;
+}
+
+.container-func input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+/* Estiliza o botão */
+.container-func button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.container-func button:hover {
+    background-color: #0056b3;
+}
+
+/* Estiliza a saída do resultado */
+#output {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e9ecef;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-align: left;
 }
