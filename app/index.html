@@ -43,16 +43,15 @@
                 var term = termos[i]; // Pegando o termo atual
 
                 if (term.includes('x')) { // Verificando se o termo atual possui o X
-                    var coeficiente = parseFloat(term.split('x')[0]); // Pegando o coeficiente do termo atual
-
-                    coeficiente = coeficiente === ' + ' || coeficiente === '' ? 1 : coeficiente === ' - ' ? -1 : coeficiente; // Trata coeficientes implícitos
+                    var coeficiente = term.split('x')[0]; // Pegando o coeficiente do termo atual
+                    coeficiente = coeficiente === '+' || coeficiente === '' ? 1 : coeficiente === '-' ? -1 : parseFloat(coeficiente); // Trata coeficientes implícitos
 
                     var expoente = parseFloat(term.split('^')[1] || '1'); // Pegando o expoente do termo atual
 
                     var novoCoeficiente = coeficiente * expoente; // Calculando o novo coeficiente para derivada
                     var novoExpoente = expoente - 1; // Calculando o novo expoente para derivada
 
-                    var sinal = novoCoeficiente >= 0 ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo
+                    var sinal = novoCoeficiente >= 0 ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo, nada se for negativo
 
                     if (novoExpoente === 1) { // Verificando se o novo expoente é 1 para não exibir o expoente
                         derivada += sinal + novoCoeficiente + 'x '; // Adicionando o novo termo na derivada
@@ -63,7 +62,31 @@
                     }
                 }
             }
-        document.getElementById("output").innerHTML = 'f\'(x) = ' + derivada; // Inserindo o resultado no HTML
+    document.getElementById("output").innerHTML = 'f\'(x) = ' + derivada; // Inserindo o resultado no HTML
+    
+    var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
+    if (calcularValorFuncional) {
+        var ponto_a = parseFloat(prompt("Qual o valor de a?"));
+        var fa = eval(funcao.replace(/x/g, ponto_a.toString()));
+        var fpa = eval(derivada.replace(/x/g, ponto_a.toString()));
+        document.getElementById("output").innerHTML += '<br>f(a) = ' + fa;
+        document.getElementById("output").innerHTML += '<br>f\'(a) = ' + fpa;
+        document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + a + ', ' + fa + ')';
     }
+
+    // Perguntar se o usuário deseja calcular a equação da reta tangente
+    var calcularRetaTangente = confirm("Deseja calcular equacao da reta tangente ao gráfico de f no ponto P(a, f(a))?");
+    if (calcularRetaTangente) {
+        var a = parseFloat(prompt("Qual o valor de a?"));
+        var fa = eval(funcao.replace(/x/g, a.toString()));
+        var fpa = eval(derivada.replace(/x/g, a.toString()));
+        var retaTangente = 'y = ' + fpa + ' * (x - ' + a + ') + ' + fa;
+        document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
+    }
+}       
+
+
+
+
     
 </script>
