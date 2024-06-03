@@ -1,0 +1,34 @@
+- Links Externos:
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>:
+
+. Este link importa a API do GeoGebra, permitindo que você integre e manipule objetos matemáticos dentro do seu aplicativo web.
+Ele é usado para criar e interagir com applets do GeoGebra.
+
+- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>:
+
+. Este link importa a biblioteca Math.js, que fornece funcionalidades para avaliação de expressões matemáticas. 
+Ela é usada neste aplicativo para calcular a função e sua derivada.
+
+- Script JavaScript:
+
+- var params = { ... };:
+
+. Esta linha define um objeto params que contém os parâmetros para o applet do GeoGebra, como largura, altura e configurações de exibição.
+
+- var applet = new GGBApplet(params, true);:
+
+. Esta linha cria um novo applet do GeoGebra com os parâmetros especificados no objeto params. O segundo argumento true indica que o applet deve ser iniciado automaticamente.
+
+- window.addEventListener("load", function() { ... });:
+
+. Este trecho de código adiciona um ouvinte de evento que espera o carregamento completo da página (load). Quando a página é totalmente carregada, a função anônima é executada, que injeta o applet do GeoGebra na página.
+
+- function centerGraph(x, y) { ... }, function addFunctionAndPointToGeoGebra(funcao, ponto_a) { ... }, function addTangentLineToGeoGebra(funcao, derivada, ponto_a) { ... }, function clearAll() { ... }:
+
+. Essas funções definem diferentes interações com o applet do GeoGebra. centerGraph centraliza o gráfico, addFunctionAndPointToGeoGebra adiciona uma função e um ponto, addTangentLineToGeoGebra adiciona uma reta tangente,
+e clearAll limpa todos os objetos do GeoGebra.
+
+- function calculate() { ... }:
+
+. Esta é a função principal que é chamada quando o botão "Calcular Derivada" é clicado. Ela calcula a derivada da função inserida, exibe o resultado na página e interage com o GeoGebra para visualização.
+Essa função incorpora a lógica de cálculo da derivada e de interação com o GeoGebra.
