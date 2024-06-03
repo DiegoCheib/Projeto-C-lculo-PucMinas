@@ -1,0 +1,40 @@
+                                TRABALHO COMPUTACIONAL DE CALCULO I
+
+Objetivo:
+Desenvolver um programa que possa receber uma função polinomial em x e calcular sua primeira derivada. O programa deve ser capaz de exibir a função e sua derivada de uma maneira formatada e também calcular o valor funcional e a equação da reta tangente em um ponto específico, se o usuário desejar.
+
+Requisitos:
+
+1. O programa deve permitir ao usuário inserir uma função polinomial em x.
+2. O programa deve calcular a primeira derivada da função.
+3. A função e sua derivada devem ser exibidas na tela, respeitando as seguintes condições:
+   - A função deve ser exibida como "f(x) = ...."
+   - O expoente 1, o coeficiente 1 e o expoente zero não devem aparecer na tela.
+   - A constante deve ser tratada com cuidado.
+4. O programa deve perguntar ao usuário se ele deseja calcular o valor funcional. Se a resposta for sim, o programa deve perguntar "qual o valor de a?" e então imprimir na tela f(a), f'(a) e o ponto P(a, f(a)).
+5. O programa deve perguntar ao usuário se ele deseja calcular a equação da reta tangente ao gráfico de f no ponto P(a, f(a)). Se a resposta for sim, o programa deve perguntar "qual o valor de a?" e então imprimir na tela a equação da reta tangente.
+
+Exemplo:
+
+Se a função inserida for "x^3 - 2x^2 – 1", o programa deve exibir:
+
+f(x) = x^3 - 2x^2 – 1
+f'(x) = 3x^2 - 4x
+
+Se o usuário desejar calcular o valor funcional em a = 1, o programa deve exibir:
+
+f(1) = -2
+f'(1) = -1
+P(1, -2)
+
+Se o usuário desejar calcular a equação da reta tangente em a = 1, o programa deve exibir:
+
+A equação da reta tangente ao gráfico de f no ponto P(1,-2) é y = -x + 3.
+
+Nota: A distribuição destas informações na tela fica a cargo do programador, mas será avaliada.
+
+Grupo de no máximo 5 pessoas!
+No dia da apresentação trazer seu computador! Após os testes de usabilidade, um integrante de cada grupo será sorteado para responder perguntas sobre o código fonte! A nota é a nota do grupo! Não precisa entregar nada ao professor!
+
+Valor: 4 pontos extras na 1ª Avaliação!
+Data da apresentação: 06/06/24
