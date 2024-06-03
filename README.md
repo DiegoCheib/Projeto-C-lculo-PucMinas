@@ -43,11 +43,9 @@ Este projeto é uma ferramenta interativa para calcular e visualizar funções m
     Siga as instruções nas janelas de prompt para calcular e visualizar a reta tangente no gráfico do GeoGebra.
 ## Estrutura do Projeto
 Projeto-Calculo-PucMinas/
-│
-├── index.html       # Página principal com a interface do usuário.
-├── README.md        # Este arquivo.
-└── assets/          # Diretório para possíveis arquivos adicionais (ex: CSS, JS externos, imagens).
-
+├── index.html       # Página principal com a interface do usuário
+├── README.md        # Este arquivo
+└── assets/          # Diretório para possíveis arquivos adicionais (ex: CSS, JS externos, imagens)
 
 ## Exemplo de Uso
 
