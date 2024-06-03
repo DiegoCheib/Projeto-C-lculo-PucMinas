@@ -28,49 +28,42 @@
 </html>
 
 <script>
-  var params = {"appName": "graphing", "width": 800, "height": 600, "showToolBar": false, "showAlgebraInput": false, "showMenuBar": false };
+  var params = {"appName": "graphing", "width": 800, "height": 600, "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true };
         var applet = new GGBApplet(params, true);
         window.addEventListener("load", function() {
             applet.inject('ggb-element', 'auto', 'preferHTML5');
         });
-
         function calculate() {
             var funcao = document.getElementById("function").value; // Pegando a função do input
             funcao = funcao.replace(/\s/g, ''); // Removendo espaços da função
-            var termos = funcao.split('/(?=[+-])/'); // Separando os termos da função
+            var termos = funcao.split(/(?=[+-])/); // Separando os termos da função
             var derivada = ''; // Inicializando a derivada
 
             for (var i = 0; i < termos.length; i++) { // For rodando todos os termos escritos no input
-
                 var term = termos[i]; // Pegando o termo atual
 
                 if (term.includes('x')) { // Verificando se o termo atual possui o X
+                    var coeficiente = parseFloat(term.split('x')[0]); // Pegando o coeficiente do termo atual
 
-                    var coeficiente = term.split('x')[0]; // Pegando o coeficiente do termo atual
+                    coeficiente = coeficiente === ' + ' || coeficiente === '' ? 1 : coeficiente === ' - ' ? -1 : coeficiente; // Trata coeficientes implícitos
 
-                    coeficiente = coeficiente === '+' || coeficiente === '' ? 1 : coeficiente === '-' ? -1 : coeficiente; // Trata coeficientes implícitos
+                    var expoente = parseFloat(term.split('^')[1] || '1'); // Pegando o expoente do termo atual
 
-                    var expoente = term.split('^')[1]; // Pegando o expoente do termo atual
-
-                    if (expoente === undefined) { // Verificando se o termo atual possui expoente se não tiver define como 1
-                        expoente = 1;
-                    }
                     var novoCoeficiente = coeficiente * expoente; // Calculando o novo coeficiente para derivada
-
                     var novoExpoente = expoente - 1; // Calculando o novo expoente para derivada
 
+                    var sinal = novoCoeficiente >= 0 ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo
+
                     if (novoExpoente === 1) { // Verificando se o novo expoente é 1 para não exibir o expoente
-                        derivada += novoCoeficiente + 'x '; // Adicionando o novo termo na derivada
-                    } 
-                    else if (novoExpoente !== 0) { // Verificando se o novo expoente é diferente de 0 para exibir o expoente
-                        derivada += novoCoeficiente + 'x^' + novoExpoente + ' '; // Adicionando o novo termo na derivada
-                    } 
-                    else {
-                        derivada += novoCoeficiente + ' '; // Se não tiver expoente exibe apenas o coeficiente
+                        derivada += sinal + novoCoeficiente + 'x '; // Adicionando o novo termo na derivada
+                    } else if (novoExpoente !== 0) { // Verificando se o novo expoente é diferente de 0 para exibir o expoente
+                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente + ' '; // Adicionando o novo termo na derivada
+                    } else {
+                        derivada += sinal + novoCoeficiente + ' '; // Se não tiver expoente exibe apenas o coeficiente
                     }
                 }
             }
         document.getElementById("output").innerHTML = 'f\'(x) = ' + derivada; // Inserindo o resultado no HTML
-}
+    }
     
 </script>
