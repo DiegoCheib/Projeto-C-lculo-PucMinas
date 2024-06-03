@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="index.css">
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -63,26 +64,37 @@
                     }
                 }
             }
-    document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada; // Inserindo o resultado no HTML
-    
+            document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada; // Inserindo o resultado no HTML
+
     var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
     if (calcularValorFuncional) {
         var ponto_a = parseFloat(prompt("Qual o valor de a?"));
-        var fa = eval(funcao.replace(/x/g, ponto_a.toString()));
-        var fpa = eval(derivada.replace(/x/g, ponto_a.toString()));
+        var scope = { x: ponto_a }; // Define o escopo para a substituição de variáveis
+
+    try {
+        var fa = math.evaluate(funcao, scope);
+        var fpa = math.evaluate(derivada, scope);
         document.getElementById("output").innerHTML += '<br>f(a) = ' + fa;
         document.getElementById("output").innerHTML += '<br>f\'(a) = ' + fpa;
-        document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + a + ', ' + fa + ')';
+        document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + ponto_a + ', ' + fa + ')';
+    } catch (error) {
+        alert("Erro ao calcular a função ou sua derivada: " + error.message);
+    }
     }
 
-    // Perguntar se o usuário deseja calcular a equação da reta tangente
     var calcularRetaTangente = confirm("Deseja calcular equacao da reta tangente ao gráfico de f no ponto P(a, f(a))?");
     if (calcularRetaTangente) {
         var a = parseFloat(prompt("Qual o valor de a?"));
-        var fa = eval(funcao.replace(/x/g, a.toString()));
-        var fpa = eval(derivada.replace(/x/g, a.toString()));
+        var scope = { x: a }; // Define o escopo para a substituição de variáveis
+
+    try {
+        var fa = math.evaluate(funcao, scope);
+        var fpa = math.evaluate(derivada, scope);
         var retaTangente = 'y = ' + fpa + ' * (x - ' + a + ') + ' + fa;
         document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
+    } catch (error) {
+        alert("Erro ao calcular a equação da reta tangente: " + error.message);
     }
-}       
+    }
+}
 </script>
