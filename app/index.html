@@ -30,12 +30,52 @@
 </html>
 
 <script>
-  var params = {"appName": "graphing", "width": 800, "height": 600, "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true };
+ var params = {
+            "appName": "graphing",
+            "width": 800,
+            "height": 600,
+            "showToolBar": false,
+            "showAlgebraInput": true,
+            "showMenuBar": false,
+        };
         var applet = new GGBApplet(params, true);
         window.addEventListener("load", function() {
             applet.inject('ggb-element', 'auto', 'preferHTML5');
         });
+        // Função para centralizar o gráfico
+                function centerGraph(x, y) {
+            var ggb = applet.getAppletObject();
+            var xOffset = 5; // Define um deslocamento padrão para a visualização
+            var yOffset = 5;
+            ggb.setCoordSystem(x - xOffset, x + xOffset, y - yOffset, y + yOffset);
+        }
+
+        // Função para adicionar a função e o ponto no GeoGebra
+        function addFunctionAndPointToGeoGebra(funcao, ponto_a) {
+            var ggb = applet.getAppletObject();
+            ggb.evalCommand(`f(x) = ${funcao}`);
+            var scope = { x: ponto_a };
+            var fa = math.evaluate(funcao, scope);
+            ggb.evalCommand(`P = (${ponto_a}, ${fa})`);
+        }
+
+        // Função para adicionar a reta tangente no GeoGebra
+        function addTangentLineToGeoGebra(funcao, derivada, ponto_a) {
+            var ggb = applet.getAppletObject();
+            var scope = { x: ponto_a };
+            var fpa = math.evaluate(derivada, scope);
+            var fa = math.evaluate(funcao, scope);
+            var retaTangente = `${fpa} * (x - ${ponto_a}) + ${fa}`;
+            ggb.evalCommand(`y = ${fpa} * (x - ${ponto_a}) + ${fa}`);
+        }
+        function clearAll() {
+            var ggb = applet.getAppletObject();
+            ggb.reset();
+        }
+
         function calculate() {
+            clearAll();
+            
             var funcao = document.getElementById("function").value; // Pegando a função do input
             funcao = funcao.replace(/\s/g, ''); // Removendo espaços da função
             var termos = funcao.split(/(?=[+-])/); // Separando os termos da função
@@ -53,48 +93,53 @@
                     var novoCoeficiente = coeficiente * expoente; // Calculando o novo coeficiente para derivada
                     var novoExpoente = expoente - 1; // Calculando o novo expoente para derivada
 
-                    var sinal = novoCoeficiente >= 0 ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo, nada se for negativo
+                    var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo e não for o primeiro termo
 
                     if (novoExpoente === 1) { // Verificando se o novo expoente é 1 para não exibir o expoente
-                        derivada += sinal + novoCoeficiente + 'x '; // Adicionando o novo termo na derivada
+                        derivada += sinal + novoCoeficiente + 'x'; // Adicionando o novo termo na derivada
                     } else if (novoExpoente !== 0) { // Verificando se o novo expoente é diferente de 0 para exibir o expoente
-                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente + ' '; // Adicionando o novo termo na derivada
+                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente; // Adicionando o novo termo na derivada
                     } else {
-                        derivada += sinal + novoCoeficiente + ' '; // Se não tiver expoente exibe apenas o coeficiente
+                        derivada += sinal + novoCoeficiente; // Se não tiver expoente exibe apenas o coeficiente
                     }
                 }
             }
             document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada; // Inserindo o resultado no HTML
+            var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
+            if (calcularValorFuncional) {
+                var ponto_a = parseFloat(prompt("Qual o valor de a?"));
+                var scope = { x: ponto_a }; // Define o escopo para a substituição de variáveis
 
-    var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
-    if (calcularValorFuncional) {
-        var ponto_a = parseFloat(prompt("Qual o valor de a?"));
-        var scope = { x: ponto_a }; // Define o escopo para a substituição de variáveis
+                try {
+                    var fa = math.evaluate(funcao, scope);
+                    var fpa = math.evaluate(derivada, scope);
+                    document.getElementById("output").innerHTML += '<br>f(a) = ' + fa;
+                    document.getElementById("output").innerHTML += '<br>f\'(a) = ' + fpa;
+                    document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + ponto_a + ', ' + fa + ')';
 
-    try {
-        var fa = math.evaluate(funcao, scope);
-        var fpa = math.evaluate(derivada, scope);
-        document.getElementById("output").innerHTML += '<br>f(a) = ' + fa;
-        document.getElementById("output").innerHTML += '<br>f\'(a) = ' + fpa;
-        document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + ponto_a + ', ' + fa + ')';
-    } catch (error) {
-        alert("Erro ao calcular a função ou sua derivada: " + error.message);
-    }
-    }
+                    // Adiciona a função e o ponto ao GeoGebra
+                    addFunctionAndPointToGeoGebra(funcao, ponto_a);
+                } catch (error) {
+                    alert("Erro ao calcular a função ou sua derivada: " + error.message);
+                }
+            }
 
-    var calcularRetaTangente = confirm("Deseja calcular equacao da reta tangente ao gráfico de f no ponto P(a, f(a))?");
-    if (calcularRetaTangente) {
-        var a = parseFloat(prompt("Qual o valor de a?"));
-        var scope = { x: a }; // Define o escopo para a substituição de variáveis
+            var calcularRetaTangente = confirm("Deseja calcular equacao da reta tangente ao gráfico de f no ponto P(a, f(a))?");
+            if (calcularRetaTangente) {
+                var a = parseFloat(prompt("Qual o valor de a?"));
+                var scope = { x: a }; // Define o escopo para a substituição de variáveis
 
-    try {
-        var fa = math.evaluate(funcao, scope);
-        var fpa = math.evaluate(derivada, scope);
-        var retaTangente = 'y = ' + fpa + ' * (x - ' + a + ') + ' + fa;
-        document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
-    } catch (error) {
-        alert("Erro ao calcular a equação da reta tangente: " + error.message);
-    }
-    }
-}
+                try {
+                    var fa = math.evaluate(funcao, scope);
+                    var fpa = math.evaluate(derivada, scope);
+                    var retaTangente = `${fpa} * (x - ${a}) + ${fa}`;
+                    document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
+
+                    // Adiciona a reta tangente ao GeoGebra
+                    addTangentLineToGeoGebra(funcao, derivada, a);
+                } catch (error) {
+                    alert("Erro ao calcular a equação da reta tangente: " + error.message);
+                }
+            }
+        }
 </script>
