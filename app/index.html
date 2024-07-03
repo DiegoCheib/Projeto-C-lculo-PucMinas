@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="index.css">
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -81,48 +80,54 @@
     var termos = funcao.split(/(?=[+-])/); // Separando os termos da função
     var derivada = ''; // Inicializando a derivada
 
-    for (var i = 0; i < termos.length; i++) { // For rodando todos os termos escritos no input
-        var term = termos[i]; // Pegando o termo atual
+    if (termos.length === 1 && !termos[0].includes('x')) {
+        // Caso seja uma constante
+        derivada = '0';
+    } else {
+        for (var i = 0; i < termos.length; i++) { // For rodando todos os termos escritos no input
+            var term = termos[i]; // Pegando o termo atual
 
-        if (term.includes('x')) { // Verificando se o termo atual possui o X
-            var coeficiente = term.split('x')[0]; // Pegando o coeficiente do termo atual
-            coeficiente = coeficiente === '+' || coeficiente === '' ? 1 : coeficiente === '-' ? -1 : parseFloat(coeficiente); // Trata coeficientes implícitos
+            if (term.includes('x')) { // Verificando se o termo atual possui o X
+                var coeficiente = term.split('x')[0]; // Pegando o coeficiente do termo atual
+                coeficiente = coeficiente === '+' || coeficiente === '' ? 1 : coeficiente === '-' ? -1 : parseFloat(coeficiente); // Trata coeficientes implícitos
 
-            var expoente = parseFloat(term.split('^')[1] || '1'); // Pegando o expoente do termo atual
+                var expoente = parseFloat(term.split('^')[1] || '1'); // Pegando o expoente do termo atual
 
-            var novoCoeficiente = coeficiente * expoente; // Calculando o novo coeficiente para derivada
-            var novoExpoente = expoente - 1; // Calculando o novo expoente para derivada
+                var novoCoeficiente = coeficiente * expoente; // Calculando o novo coeficiente para derivada
+                var novoExpoente = expoente - 1; // Calculando o novo expoente para derivada
 
-            var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo e não for o primeiro termo
+                var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo e não for o primeiro termo
 
-            if (expoente < 0) {
-                var novoCoeficiente = coeficiente * expoente;
-                var novoExpoente = expoente - 1;
-                var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
+                if (expoente < 0) {
+                    var novoCoeficiente = coeficiente * expoente;
+                    var novoExpoente = expoente - 1;
+                    var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
 
-                if (novoExpoente === 1) {x
-                    derivada += sinal + novoCoeficiente + 'x';
-                } else if (novoExpoente !== 0) {
-                    derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
+                    if (novoExpoente === 1) {
+                        derivada += sinal + novoCoeficiente + 'x';
+                    } else if (novoExpoente !== 0) {
+                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
+                    } else {
+                        derivada += sinal + novoCoeficiente;
+                    }
                 } else {
-                    derivada += sinal + novoCoeficiente;
-                }
-            } else {
-                var novoCoeficiente = coeficiente * expoente;
-                var novoExpoente = expoente - 1;
-                var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
+                    var novoCoeficiente = coeficiente * expoente;
+                    var novoExpoente = expoente - 1;
+                    var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
 
-                if (novoExpoente === 1) {
-                    derivada += sinal + novoCoeficiente + 'x';
-                } else if (novoExpoente !== 0) {
-                    derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
-                } else {
-                    derivada += sinal + novoCoeficiente;
+                    if (novoExpoente === 1) {
+                        derivada += sinal + novoCoeficiente + 'x';
+                    } else if (novoExpoente !== 0) {
+                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
+                    } else {
+                        derivada += sinal + novoCoeficiente;
+                    }
                 }
+
             }
-
         }
     }
+
     document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada; // Inserindo o resultado no HTML
 
     var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
@@ -152,15 +157,24 @@
         try {
             var fa = math.evaluate(funcao, scope);
             var fpa = math.evaluate(derivada, scope);
-            var retaTangente = `${fpa} * (x - ${a}) + ${fa}`;
+            var b = fa - fpa * a;
+    
+            // Formatar a equação da reta tangente
+            var retaTangente;
+            if (b >= 0) {
+                retaTangente = `y = ${fpa}x + ${b}`;
+            } else {
+                retaTangente = `y = ${fpa}x - ${Math.abs(b)}`;
+            }
+
             document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
 
-            // Adiciona a reta tangente ao GeoGebra
             addTangentLineToGeoGebra(funcao, derivada, a);
         } catch (error) {
             alert("Erro ao calcular a equação da reta tangente: " + error.message);
         }
     }
 }
+
 
 </script>
