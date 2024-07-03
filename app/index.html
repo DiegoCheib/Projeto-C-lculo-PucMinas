@@ -3,8 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programa Calculo</title>
-    <link rel="stylesheet" href="index.css">
+    <title>Programa de Cálculo</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .container-func, .container-raiz {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        label {
+            margin-right: 5px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 5px;
+            width: 150px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #ggb-element {
+            margin-bottom: 20px;
+        }
+    </style>
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 </head>
@@ -24,12 +69,27 @@
             
             <p id="output"></p>
         </div>
-    </div>
-</body>
-</html>
 
-<script>
- var params = {
+        <!-- Novo bloco para calcular raiz enésima -->
+        <div class="container-raiz">
+            <h2>Calculadora de Raiz Enésima</h2>
+            
+            <p>Insira o número k e o índice n para calcular a raiz enésima:</p>
+            
+            <div class="input-group">
+                <label for="k">k =</label>
+                <input id="k" type="number">
+                <label for="n">n =</label>
+                <input id="n" type="number">
+                <button onclick="calcularRaizEnesima()">Calcular Raiz</button>
+            </div>
+            
+            <p id="outputRaiz"></p>
+        </div>
+    </div>
+
+    <script>
+        var params = {
             "appName": "graphing",
             "width": 800,
             "height": 600,
@@ -41,140 +101,198 @@
         window.addEventListener("load", function() {
             applet.inject('ggb-element', 'auto', 'preferHTML5');
         });
-        // Função para centralizar o gráfico
-                function centerGraph(x, y) {
+
+        // Função para calcular derivadas
+        function calculate() {
+            clearAll();
+            var funcao = document.getElementById("function").value.replace(/\s/g, '');
+            var termos = funcao.split(/(?=[+-])/);
+            var derivada = '';
+
+            if (termos.length === 1 && !termos[0].includes('x')) {
+                derivada = '0';
+            } else {
+                for (var i = 0; i < termos.length; i++) {
+                    var term = termos[i];
+
+                    if (term.includes('x')) {
+                        var coeficiente = term.split('x')[0];
+                        coeficiente = coeficiente === '+' || coeficiente === '' ? 1 : coeficiente === '-' ? -1 : parseFloat(coeficiente);
+                        var expoente = parseFloat(term.split('^')[1] || '1');
+                        var novoCoeficiente = coeficiente * expoente;
+                        var novoExpoente = expoente - 1;
+                        var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
+
+                        if (novoExpoente === 1) {
+                            derivada += sinal + novoCoeficiente + 'x';
+                        } else if (novoExpoente !== 0) {
+                            derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
+                        } else {
+                            derivada += sinal + novoCoeficiente;
+                        }
+                    }
+                }
+            }
+
+            document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada;
+
+            var calcularValorFuncional = confirm("Deseja calcular o valor funcional?");
+            if (calcularValorFuncional) {
+                var ponto_a = parseFloat(prompt("Qual o valor de a?"));
+                var scope = { x: ponto_a };
+
+                try {
+                    var fa = math.evaluate(funcao, scope);
+                    var fpa = math.evaluate(derivada, scope);
+                    document.getElementById("output").innerHTML += '<br>f(a) = ' + fa;
+                    document.getElementById("output").innerHTML += '<br>f\'(a) = ' + fpa;
+                    document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + ponto_a + ', ' + fa + ')';
+
+                    addFunctionAndPointToGeoGebra(funcao, ponto_a);
+                } catch (error) {
+                    alert("Erro ao calcular a função ou sua derivada: " + error.message);
+                }
+            }
+
+            var calcularRetaTangente = confirm("Deseja calcular a equação da reta tangente?");
+            if (calcularRetaTangente) {
+                var a = parseFloat(prompt("Qual o valor de a?"));
+                var scope = { x: a };
+
+                try {
+                    var fa = math.evaluate(funcao, scope);
+                    var fpa = math.evaluate(derivada, scope);
+                    var b = fa - fpa * a;
+                    var retaTangente = `y = ${fpa}x + ${b}`;
+
+                    document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
+
+                    addTangentLineToGeoGebra(funcao, derivada, a);
+                } catch (error) {
+                    alert("Erro ao calcular a equação da reta tangente: " + error.message);
+                }
+            }
+
+            // FASE I - Isolamento dos intervalos que contêm as raízes
+            var intervalos = isolamentoDeRaizes(funcao);
+            document.getElementById("output").innerHTML += '<br>Fase 1: O número de possíveis raízes são: ' + intervalos.length;
+
+            // FASE II - Refinamento da raiz usando o Método de Newton
+            var raizes = refinamentoDeRaizes(funcao, intervalos);
+            document.getElementById("output").innerHTML += '<br>Fase 2: As raízes do polinômio fornecido no intervalo [-10, 10] são: ' + raizes.join(', ');
+        }
+
+        // Função para calcular a raiz enésima
+        function calcularRaizEnesima() {
+            var k = parseFloat(document.getElementById("k").value);
+            var n = parseFloat(document.getElementById("n").value);
+
+            if (isNaN(k) || isNaN(n)) {
+                alert("Por favor, insira valores válidos para k e n.");
+                return;
+            }
+
+            if (k <= 0) {
+                alert("k deve ser um número real positivo.");
+                return;
+            }
+
+            var resultadoRaiz = Math.pow(k, 1 / n);
+            document.getElementById("outputRaiz").innerHTML = "A raiz " + n + "-ésima de " + k + " é: " + resultadoRaiz.toFixed(8);
+        }
+
+        // Funções para interação com o GeoGebra
+        function centerGraph(x, y) {
             var ggb = applet.getAppletObject();
-            var xOffset = 5; // Define um deslocamento padrão para a visualização
+            var xOffset = 5;
             var yOffset = 5;
             ggb.setCoordSystem(x - xOffset, x + xOffset, y - yOffset, y + yOffset);
         }
 
-        // Função para adicionar a função e o ponto no GeoGebra
         function addFunctionAndPointToGeoGebra(funcao, ponto_a) {
             var ggb = applet.getAppletObject();
             ggb.evalCommand(`f(x) = ${funcao}`);
-            var scope = { x: ponto_a };
-            var fa = math.evaluate(funcao, scope);
-            ggb.evalCommand(`P = (${ponto_a}, ${fa})`);
+            ggb.evalCommand(`A = (${ponto_a}, f(${ponto_a}))`);
+            centerGraph(ponto_a, math.evaluate(funcao, {x: ponto_a}));
         }
 
-        // Função para adicionar a reta tangente no GeoGebra
         function addTangentLineToGeoGebra(funcao, derivada, ponto_a) {
             var ggb = applet.getAppletObject();
+            ggb.evalCommand(`f(x) = ${funcao}`);
             var scope = { x: ponto_a };
             var fpa = math.evaluate(derivada, scope);
             var fa = math.evaluate(funcao, scope);
-            var retaTangente = `${fpa} * (x - ${ponto_a}) + ${fa}`;
-            ggb.evalCommand(`y = ${fpa} * (x - ${ponto_a}) + ${fa}`);
+            var b = fa - fpa * ponto_a;
+
+            // Calcula a equação da reta tangente
+            var retaTangente = `y = ${fpa} * x + ${b}`;
+
+            // Adiciona a reta tangente ao GeoGebra
+            ggb.evalCommand(retaTangente);
+
+            // Centraliza o gráfico no ponto da tangente
+            centerGraph(ponto_a, fa);
         }
+        // Função para limpar resultados anteriores
         function clearAll() {
-            var ggb = applet.getAppletObject();
-            ggb.reset();
+            document.getElementById("output").innerHTML = '';
+            document.getElementById("outputRaiz").innerHTML = '';
         }
 
-        function calculate() {
-    clearAll();
-    
-    var funcao = document.getElementById("function").value; // Pegando a função do input
-    funcao = funcao.replace(/\s/g, ''); // Removendo espaços da função
-    var termos = funcao.split(/(?=[+-])/); // Separando os termos da função
-    var derivada = ''; // Inicializando a derivada
+        // Funções para isolamento e refinamento de raízes (exemplo básico)
+        function isolamentoDeRaizes(funcao) {
+            var intervalos = [];
+            var limite = 10;
+            var passo = 0.1;
+            var inicioIntervalo = -limite;
+            var fimIntervalo = limite;
 
-    if (termos.length === 1 && !termos[0].includes('x')) {
-        // Caso seja uma constante
-        derivada = '0';
-    } else {
-        for (var i = 0; i < termos.length; i++) { // For rodando todos os termos escritos no input
-            var term = termos[i]; // Pegando o termo atual
+            for (var x = inicioIntervalo; x <= fimIntervalo; x += passo) {
+                var fa = math.evaluate(funcao, {x: x});
+                var fb = math.evaluate(funcao, {x: x + passo});
 
-            if (term.includes('x')) { // Verificando se o termo atual possui o X
-                var coeficiente = term.split('x')[0]; // Pegando o coeficiente do termo atual
-                coeficiente = coeficiente === '+' || coeficiente === '' ? 1 : coeficiente === '-' ? -1 : parseFloat(coeficiente); // Trata coeficientes implícitos
-
-                var expoente = parseFloat(term.split('^')[1] || '1'); // Pegando o expoente do termo atual
-
-                var novoCoeficiente = coeficiente * expoente; // Calculando o novo coeficiente para derivada
-                var novoExpoente = expoente - 1; // Calculando o novo expoente para derivada
-
-                var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : ''; // Adiciona o sinal de '+' se o coeficiente for positivo e não for o primeiro termo
-
-                if (expoente < 0) {
-                    var novoCoeficiente = coeficiente * expoente;
-                    var novoExpoente = expoente - 1;
-                    var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
-
-                    if (novoExpoente === 1) {
-                        derivada += sinal + novoCoeficiente + 'x';
-                    } else if (novoExpoente !== 0) {
-                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
-                    } else {
-                        derivada += sinal + novoCoeficiente;
-                    }
-                } else {
-                    var novoCoeficiente = coeficiente * expoente;
-                    var novoExpoente = expoente - 1;
-                    var sinal = novoCoeficiente >= 0 && derivada !== '' ? ' + ' : '';
-
-                    if (novoExpoente === 1) {
-                        derivada += sinal + novoCoeficiente + 'x';
-                    } else if (novoExpoente !== 0) {
-                        derivada += sinal + novoCoeficiente + 'x^' + novoExpoente;
-                    } else {
-                        derivada += sinal + novoCoeficiente;
-                    }
+                if (fa * fb <= 0) {
+                    intervalos.push([x, x + passo]);
                 }
-
-            }
-        }
-    }
-
-    document.getElementById("output").innerHTML = 'Resultado:<br>f\'(x) = ' + derivada; // Inserindo o resultado no HTML
-
-    var calcularValorFuncional = confirm("Deseja calcular valor funcional?");
-    if (calcularValorFuncional) {
-        var ponto_a = parseFloat(prompt("Qual o valor de a?"));
-        var scope = { x: ponto_a }; // Define o escopo para a substituição de variáveis
-
-        try {
-            var fa = math.evaluate(funcao, scope);
-            var fpa = math.evaluate(derivada, scope);
-            document.getElementById("output").innerHTML += '<br>f(a) = ' + fa;
-            document.getElementById("output").innerHTML += '<br>f\'(a) = ' + fpa;
-            document.getElementById("output").innerHTML += '<br>Ponto P(a, f(a)) = (' + ponto_a + ', ' + fa + ')';
-
-            // Adiciona a função e o ponto ao GeoGebra
-            addFunctionAndPointToGeoGebra(funcao, ponto_a);
-        } catch (error) {
-            alert("Erro ao calcular a função ou sua derivada: " + error.message);
-        }
-    }
-
-    var calcularRetaTangente = confirm("Deseja calcular equacao da reta tangente ao gráfico de f no ponto P(a, f(a))?");
-    if (calcularRetaTangente) {
-        var a = parseFloat(prompt("Qual o valor de a?"));
-        var scope = { x: a }; // Define o escopo para a substituição de variáveis
-
-        try {
-            var fa = math.evaluate(funcao, scope);
-            var fpa = math.evaluate(derivada, scope);
-            var b = fa - fpa * a;
-    
-            // Formatar a equação da reta tangente
-            var retaTangente;
-            if (b >= 0) {
-                retaTangente = `y = ${fpa}x + ${b}`;
-            } else {
-                retaTangente = `y = ${fpa}x - ${Math.abs(b)}`;
             }
 
-            document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
-
-            addTangentLineToGeoGebra(funcao, derivada, a);
-        } catch (error) {
-            alert("Erro ao calcular a equação da reta tangente: " + error.message);
+            return intervalos;
         }
-    }
-}
 
+        function refinamentoDeRaizes(funcao, intervalos) {
+            var raizes = [];
 
-</script>
+            for (var i = 0; i < intervalos.length; i++) {
+                var inicio = intervalos[i][0];
+                var fim = intervalos[i][1];
+                var estimativa = (inicio + fim) / 2;
+                var precisao = 0.0001;
+                var iteracoesMaximas = 100;
+                var iteracao = 0;
+
+                while (iteracao < iteracoesMaximas) {
+                    var fa = math.evaluate(funcao, {x: inicio});
+                    var fb = math.evaluate(funcao, {x: fim});
+                    var fc = math.evaluate(funcao, {x: estimativa});
+
+                    if (Math.abs(fc) < precisao) {
+                        raizes.push(estimativa.toFixed(8));
+                        break;
+                    }
+
+                    if (fa * fc < 0) {
+                        fim = estimativa;
+                    } else if (fb * fc < 0) {
+                        inicio = estimativa;
+                    }
+
+                    estimativa = (inicio + fim) / 2;
+                    iteracao++;
+                }
+            }
+
+            return raizes;
+        }
+    </script>
+</body>
+</html>
