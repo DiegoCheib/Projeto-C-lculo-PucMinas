@@ -6,7 +6,8 @@
     <title>Programa de Cálculo</title>
     <style>
         .container {
-            max-width: 800px;
+            display: flex;
+            flex-direction: row;
             margin: 0 auto;
             padding: 20px;
             background-color: #f9f9f9;
@@ -56,20 +57,22 @@
 <body>
     <div class="container">
         <div id="ggb-element"></div>
-        <div class="container-func">
-            <h2>Calculadora de Derivadas</h2>
-            
-            <p>Insira a função polinomial (por exemplo, 2x^2 - 3x + 4):</p>
-            
-            <div class="input-group">
-                <label for="function">f(x) =</label>
-                <input id="function" type="text">
-                <button onclick="calculate()">Calcular Derivada</button>
-            </div>
-            
+        <div id="ajuste">
+
+            <div class="container-func">
+                <h2>Calculadora de Derivadas</h2>
+                
+                <p>Insira a função polinomial (por exemplo, 2x^2 - 3x + 4):</p>
+                
+                <div class="input-group">
+                    <label for="function">f(x) =</label>
+                    <input id="function" type="text">
+                    <button onclick="calculate()">Calcular Derivada</button>
+                </div>
+                
             <p id="output"></p>
         </div>
-
+        
         <!-- Novo bloco para calcular raiz enésima -->
         <div class="container-raiz">
             <h2>Calculadora de Raiz Enésima</h2>
@@ -86,6 +89,7 @@
             
             <p id="outputRaiz"></p>
         </div>
+    </div>
     </div>
 
     <script>
