@@ -167,8 +167,7 @@
                     var fa = math.evaluate(funcao, scope);
                     var fpa = math.evaluate(derivada, scope);
                     var b = fa - fpa * a;
-                    var retaTangente = `y = ${fpa}x + ${b}`;
-
+                    var retaTangente = formatarEquacaoReta(fpa, b);                     
                     document.getElementById("output").innerHTML += '<br>A equação da reta tangente ao gráfico de f no ponto P(' + a + ', ' + fa + ') é ' + retaTangente;
 
                     addTangentLineToGeoGebra(funcao, derivada, a);
@@ -296,6 +295,13 @@
             }
 
             return raizes;
+        }
+        function formatarEquacaoReta(fpa, b) {
+            let mFormatado = (fpa === 1) ? "" : ((fpa === -1) ? "-" : fpa);
+            let bFormatado = (b >= 0) ? ` + ${b}` : ` - ${Math.abs(b)}`;
+            let equacao = `y = ${mFormatado}x${bFormatado}`;
+            equacao = equacao.replace(" + -", " - ").replace(" - -", " + ");
+            return equacao;
         }
     </script>
 </body>
